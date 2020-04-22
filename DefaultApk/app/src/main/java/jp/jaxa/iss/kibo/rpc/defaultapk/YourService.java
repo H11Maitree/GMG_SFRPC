@@ -6,6 +6,20 @@ import gov.nasa.arc.astrobee.Result;
 import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
 
+import android.graphics.Bitmap;
+
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.ChecksumException;
+import com.google.zxing.FormatException;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.RGBLuminanceSource;
+import com.google.zxing.Reader;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.qrcode.QRCodeReader;
+
+import java.io.ByteArrayOutputStream;
+
 /**
  * Class meant to handle commands from the Ground Data System and execute them in Astrobee
  */
@@ -21,7 +35,7 @@ public class YourService extends KiboRpcService {
         // write here your plan 1
         api.judgeSendStart();
         moveToWrapper(10.95, -3.3, 4.9, 0, 0, 0, 1);
-        var res=detectBarCode();
+        String res=detectBarCode();
         if (res!=null){
             moveToWrapper(10.4, -3.3, 4.9, 0, 0, 0, 1);
         }
@@ -44,6 +58,7 @@ public class YourService extends KiboRpcService {
             moveToWrapper(10.4, -5.1, 4.9, 0, 0, 0, 1);
         }
 
+        // Where should see some qr
         moveToWrapper(10.95, -5.8, 4.9, 0, 0, 0, 1);
         res=detectBarCode();
         if (res!=null){
@@ -106,8 +121,8 @@ public class YourService extends KiboRpcService {
         Reader reader = new QRCodeReader();
         
         try {
-            Result result = reader.decode(new BinaryBitmap(new HybridBinarizer(source)));
-            return result.getText();
+            com.google.zxing.Result result = reader.decode(new BinaryBitmap(new HybridBinarizer(source)));
+            return ((com.google.zxing.Result) result).getText();
         } catch (NotFoundException e) {
             e.printStackTrace();
             return null;
