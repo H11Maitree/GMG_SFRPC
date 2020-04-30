@@ -38,6 +38,13 @@ public class YourService extends KiboRpcService {
     //Min           10.25   -9.75   4.2
     //Max           11.65   -3      5.6
     //Mean          10.95   -6.375  4.9
+    double pos_x=0;
+    double pos_y=0;
+    double pos_z=0;
+    double qua_x=0;
+    double qua_y=0;
+    double qua_z=0;
+    double qua_w=0;
 
     @Override
     protected void runPlan1(){
@@ -45,30 +52,34 @@ public class YourService extends KiboRpcService {
         api.judgeSendStart();
         Log.i("Plan1","judgeSendStart Done");
         moveToWrapper(10.6, -4.3, 5, 0, 0, -0.7071068, 0.7071068);
-        api.judgeSendDiscoveredQR(0, detectBarCode() );
+
+        String scaned = detectQR();
+        api.judgeSendDiscoveredQR(0, scaned );
+        pos_x = Double.valueOf(scaned.substring(7));
         Log.i("Plan1","pos no 0");
 
         moveToWrapper(11, -4.3, 5, 0, 0, -0.7071068, 0.7071068);
-        api.judgeSendDiscoveredQR (1, detectBarCode() );
+        scaned = detectQR();
+        api.judgeSendDiscoveredQR(0, scaned );
+        pos_x = Double.valueOf(scaned.substring(7));
         Log.i("Plan1","pos no 1");
 
         moveToWrapper(11, -5.7, 5, 0, 0, -0.7071068, 0.7071068);
-        api.judgeSendDiscoveredQR(2, detectBarCode() );
+        scaned = detectQR();
+        api.judgeSendDiscoveredQR(0, scaned );
+        pos_x = Double.valueOf(scaned.substring(7));
         Log.i("Plan1","pos no 2");
 
         moveToWrapper(11.5, -5.7, 4.5, 0, 0, 0, 1);
-        api.judgeSendDiscoveredQR(3, detectBarCode() );
         Log.i("Plan1","pos no 3");
 
         moveToWrapper(11, -6, 5.55, 0, -0.7071068, 0, 0.7071068);
-        api.judgeSendDiscoveredQR(4, detectBarCode() );
         Log.i("Plan1","pos no 4");
 
-        api.laserControl(true);
+
         moveToWrapper(11.1, -6, 5.55, 0, -0.7071068, 0, 0.7071068);
         Log.i("Plan1","pos no 5");
 
-        api.judgeSendFinishSimulation();
         Log.i("Plan1","pos no 6");
     }
 
@@ -80,6 +91,18 @@ public class YourService extends KiboRpcService {
     @Override
     protected void runPlan3(){
         // write here your plan 3
+    }
+
+    void movetotarget(double ARx, double ARy, double Pxw){
+        if(pos_y>-9.55){
+            pos_y=-9.55;
+        }
+        Log.i("Movetotarget","init");
+        moveToWrapper((pos_x+0.1414+((ARx-640)*(0.05/Pxw))), pos_y, (pos_z-0.1414-((ARy-480)*(0.05/Pxw))), 0, 0, 0.707, -0.707);
+        Log.i("Movetotarget","Moved");
+        api.laserControl(true);
+        Log.i("Movetotarget","lasered");
+        api.judgeSendFinishSimulation();
     }
 
     void detectAR(){
@@ -94,9 +117,21 @@ public class YourService extends KiboRpcService {
         Aruco.detectMarkers(mat,dictionary,cornors,ids);
         Log.i("AR_modul","ids : " + ids.dump());
         Log.i("AR_modul","cornors : " + cornors.get(0).dump());
+        double id=ids.get(0,0)[0];
+        Mat cornor=cornors.get(0);
+        double centre_X = (cornor.get(0,0)[0]+cornor.get(2,0)[0])/2;
+        double centre_Y = (cornor.get(0,1)[0]+cornor.get(2,1)[0])/2;
+        double pixel_w = (cornor.get(0,0)[0]-cornor.get(2,0)[0]);
+        Log.i("AR_modul","Get all param");
+        if(pixel_w<0){
+            pixel_w= (-1)*pixel_w;
+        }
+        Log.i("AR_modul","Calling movetotarget");
+        movetotarget(centre_X,centre_Y,pixel_w);
+
     }
     //Barcode scanner code from Shakeeb Ayaz https://stackoverflow.com/a/39953598
-    String detectBarCode() {
+    String detectQR() {
         Log.i("QR_modul","Check0 init func detectBarcode");
 
         Bitmap bMap=api.getBitmapNavCam();
