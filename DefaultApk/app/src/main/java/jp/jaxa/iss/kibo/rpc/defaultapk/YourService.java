@@ -7,6 +7,7 @@ import gov.nasa.arc.astrobee.types.Point;
 import gov.nasa.arc.astrobee.types.Quaternion;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
@@ -34,69 +35,33 @@ public class YourService extends KiboRpcService {
     protected void runPlan1(){
         // write here your plan 1
         api.judgeSendStart();
-        moveToWrapper(10.95, -3.3, 4.9, 0, 0, 0, 1);
-        String res=detectBarCode();
-        if (res!=null){
-            moveToWrapper(10.4, -3.3, 4.9, 0, 0, 0, 1);
-        }
+        Log.i("Plan1","judgeSendStart Done");
+        moveToWrapper(10.6, -4.3, 5, 0, 0, -0.7071068, 0.7071068);
+        api.judgeSendDiscoveredQR(0, detectBarCode() );
+        Log.i("Plan1","pos no 0");
 
-        moveToWrapper(10.95, -3.7, 4.9, 1, 0, 0, 0);
-        res=detectBarCode();
-        if (res!=null){
-            moveToWrapper(10.4, -3.7, 4.9, 0, 0, 0, 1);
-        }
+        moveToWrapper(11, -4.3, 5, 0, 0, -0.7071068, 0.7071068);
+        api.judgeSendDiscoveredQR (1, detectBarCode() );
+        Log.i("Plan1","pos no 1");
 
-        moveToWrapper(10.95, -4.4, 4.9, 0, 1, 0, 0);
-        res=detectBarCode();
-        if (res!=null){
-            moveToWrapper(10.4, -4.4, 4.9, 0, 0, 0, 1);
-        }
+        moveToWrapper(11, -5.7, 5, 0, 0, -0.7071068, 0.7071068);
+        api.judgeSendDiscoveredQR(2, detectBarCode() );
+        Log.i("Plan1","pos no 2");
 
-        moveToWrapper(10.95, -5.1, 4.9, 0, 0, 1, 0);
-        res=detectBarCode();
-        if (res!=null){
-            moveToWrapper(10.4, -5.1, 4.9, 0, 0, 0, 1);
-        }
+        moveToWrapper(11.5, -5.7, 4.5, 0, 0, 0, 1);
+        api.judgeSendDiscoveredQR(3, detectBarCode() );
+        Log.i("Plan1","pos no 3");
 
-        // Where should see some qr
-        moveToWrapper(10.95, -5.8, 4.9, 0, 0, 0, 1);
-        res=detectBarCode();
-        if (res!=null){
-            moveToWrapper(10.4, -5.8, 4.9, 0, 0, 0, 1);
-        }
-
-        moveToWrapper(10.95, -6.5, 4.9, 0, 0, 0, 1);
-        res=detectBarCode();
-        if (res!=null){
-            moveToWrapper(10.95, -5.8, 4.9, 0, 0, 0, 1);
-        }
-
-        moveToWrapper(10.95, -7.2, 4.9, 0, 0, 0, 1);
-        res=detectBarCode();
-        if (res!=null){
-            moveToWrapper(10.95, -7.2, 4.9, 0, 0, 0, 1);
-        }
-
-        moveToWrapper(10.95, -7.9, 4.9, 0, 0, 0, 1);
-        res=detectBarCode();
-        if (res!=null){
-            moveToWrapper(10.95, -7.9, 4.9, 0, 0, 0, 1);
-        }
-
-        moveToWrapper(10.95, -8.6, 4.9, 0, 0, 0, 1);
-        res=detectBarCode();
-        if (res!=null){
-            moveToWrapper(10.95, -8.6, 4.9, 0, 0, 0, 1);
-        }
-
-        moveToWrapper(10.95, -9.3, 4.9, 0, 0, 0, 1);
-        res=detectBarCode();
-        if (res!=null){
-            moveToWrapper(10.95, -9.3, 4.9, 0, 0, 0, 1);
-        }
+        moveToWrapper(11, -6, 5.55, 0, -0.7071068, 0, 0.7071068);
+        api.judgeSendDiscoveredQR(4, detectBarCode() );
+        Log.i("Plan1","pos no 4");
 
         api.laserControl(true);
+        moveToWrapper(11.1, -6, 5.55, 0, -0.7071068, 0, 0.7071068);
+        Log.i("Plan1","pos no 5");
+
         api.judgeSendFinishSimulation();
+        Log.i("Plan1","pos no 6");
     }
 
     @Override
@@ -111,26 +76,32 @@ public class YourService extends KiboRpcService {
 
     //Barcode scanner code from Shakeeb Ayaz https://stackoverflow.com/a/39953598
     String detectBarCode() {
-        Bitmap bitmap = api.getBitmapNavCam(); 
+        Log.i("QR_modul","Check0 init func detectBarcode");
+        Bitmap bitmap = Bitmap.createScaledBitmap(api.getBitmapNavCam(),640,480,false);
+        Log.i("QR_modul","Check1 Get Bitmap");
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         int[] intArray = new int[bitmap.getWidth() * bitmap.getHeight()];
         bitmap.getPixels(intArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         LuminanceSource source = new RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), intArray);
-        
+        Log.i("QR_modul","Check2");
         Reader reader = new QRCodeReader();
-        
+        Log.i("QR_modul","Check3");
         try {
             com.google.zxing.Result result = reader.decode(new BinaryBitmap(new HybridBinarizer(source)));
+            Log.i("QR_modul",((com.google.zxing.Result) result).getText());
             return ((com.google.zxing.Result) result).getText();
         } catch (NotFoundException e) {
             e.printStackTrace();
+            Log.i("QR_modul","Return null 1");
             return null;
         } catch (ChecksumException e) {
             e.printStackTrace();
+            Log.i("QR_modul","Return null 2");
             return null;
         } catch (FormatException e) {
             e.printStackTrace();
+            Log.i("QR_modul","Return null 3");
             return null;
         }
     }
