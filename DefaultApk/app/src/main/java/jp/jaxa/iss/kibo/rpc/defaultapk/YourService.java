@@ -16,10 +16,18 @@ import com.google.zxing.LuminanceSource;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.Reader;
+import com.google.zxing.ReaderException;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
+import org.opencv.android.Utils;
+import org.opencv.aruco.Aruco;
+import org.opencv.aruco.Dictionary;
+import org.opencv.core.Mat;
+
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class meant to handle commands from the Ground Data System and execute them in Astrobee
@@ -74,36 +82,50 @@ public class YourService extends KiboRpcService {
         // write here your plan 3
     }
 
+    void detectAR(){
+        Bitmap bMap=api.getBitmapNavCam();
+        Log.i("AR_modul","Get Bitmap");
+        Mat mat= new Mat();
+        Dictionary dictionary = Aruco.getPredefinedDictionary(Aruco.DICT_5X5_250);
+        Utils.bitmapToMat(bMap,mat);
+        List<Mat> cornors= new ArrayList<Mat>();
+        Mat ids= new Mat();
+        Log.i("AR_modul","Set up done");
+        Aruco.detectMarkers(mat,dictionary,cornors,ids);
+        Log.i("AR_modul","ids : " + ids.dump());
+        Log.i("AR_modul","cornors : " + cornors.get(0).dump());
+    }
     //Barcode scanner code from Shakeeb Ayaz https://stackoverflow.com/a/39953598
     String detectBarCode() {
         Log.i("QR_modul","Check0 init func detectBarcode");
-        Bitmap bitmap = Bitmap.createScaledBitmap(api.getBitmapNavCam(),640,480,false);
-        Log.i("QR_modul","Check1 Get Bitmap");
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        int[] intArray = new int[bitmap.getWidth() * bitmap.getHeight()];
-        bitmap.getPixels(intArray, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        LuminanceSource source = new RGBLuminanceSource(bitmap.getWidth(), bitmap.getHeight(), intArray);
-        Log.i("QR_modul","Check2");
-        Reader reader = new QRCodeReader();
-        Log.i("QR_modul","Check3");
-        try {
-            com.google.zxing.Result result = reader.decode(new BinaryBitmap(new HybridBinarizer(source)));
-            Log.i("QR_modul",((com.google.zxing.Result) result).getText());
-            return ((com.google.zxing.Result) result).getText();
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-            Log.i("QR_modul","Return null 1");
-            return null;
-        } catch (ChecksumException e) {
-            e.printStackTrace();
-            Log.i("QR_modul","Return null 2");
-            return null;
-        } catch (FormatException e) {
-            e.printStackTrace();
-            Log.i("QR_modul","Return null 3");
-            return null;
+
+        Bitmap bMap=api.getBitmapNavCam();
+        Log.i("QR_modul","Get bitmap");
+
+        int[] intArray = new int[bMap.getWidth()*bMap.getHeight()];
+        //copy pixel data from the Bitmap into the 'intArray' array
+        bMap.getPixels(intArray, 0, bMap.getWidth(), 0, 0, bMap.getWidth(), bMap.getHeight());
+
+        LuminanceSource source = new RGBLuminanceSource(bMap.getWidth(), bMap.getHeight(), intArray);
+        Log.i("QR_modul","LuminanceSource");
+
+        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+        Log.i("QR_modul","Get binarybitmap");
+
+        QRCodeReader reader= new QRCodeReader();
+        Log.i("QR_modul","Setup reader");
+
+        com.google.zxing.Result result=null;
+        try{
+            result=reader.decode(bitmap);
+            Log.i("QR_modul","Get result");
+        } catch (ReaderException e){
+            Log.i("QR_modul","Reader ERROR");
+            return "Reader ERROR";
         }
+        Log.i("QR_modul","Result : " + result.getText());
+        return result.getText();
+
     }
 
     //This func help to avoid tolerance violations error
