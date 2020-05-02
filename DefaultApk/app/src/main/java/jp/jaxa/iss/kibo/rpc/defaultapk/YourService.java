@@ -53,70 +53,111 @@ public class YourService extends KiboRpcService {
         // write here your plan 1
         api.judgeSendStart();
         Log.i("Plan1","judgeSendStart Done");
-        moveToWrapper(11.4, -3.75, 4.5, 0, 0, 0, 1);
+        moveToWrapper(11.4, -3.75, 4.5, 0, 0, 0, 1,5);
         Log.i("Plan1","Check 8");
-        moveToWrapper(11.5, -5.7, 4.5, 0, 0, 0, 1);
+        moveToWrapper(11.5, -5.7, 4.5, 0, 0, 0, 1,5);
         String scaned = detectQR();
-        api.judgeSendDiscoveredQR(0, scaned );
-        if(scaned!="Reader ERROR") {
+
+        if(!scaned.equals("Reader ERROR")) {
             spos_x = Double.valueOf(scaned.substring(7));
+        }else{
+            moveToWrapper(11.5, -5.7, 4.5, 0, 0, 0, 1,1);
+            scaned = detectQR();
+            if(!scaned.equals("Reader ERROR")){
+                spos_x = Double.valueOf(scaned.substring(7));
+            }
         }
+        api.judgeSendDiscoveredQR(0, scaned );
         Log.i("Plan1","pos no 0");
 
-        moveToWrapper(11, -6, 5.55, 0, -0.7071068, 0, 0.7071068);
+        moveToWrapper(11, -6, 5.55, 0, -0.7071068, 0, 0.7071068,5);
         scaned = detectQR();
-        api.judgeSendDiscoveredQR(1, scaned );
-        if(scaned!="Reader ERROR") {
+
+        if(!scaned.equals("Reader ERROR")) {
             spos_y = Double.valueOf(scaned.substring(7));
+        }else{
+            moveToWrapper(11, -6, 5.55, 0, -0.7071068, 0, 0.7071068,1);
+            scaned = detectQR();
+            if(!scaned.equals("Reader ERROR")){
+                spos_y = Double.valueOf(scaned.substring(7));
+            }
         }
+        api.judgeSendDiscoveredQR(1, scaned );
         Log.i("Plan1","pos no 1");
 
-        moveToWrapper(11, -5.5, 4.33, 0, 0.7071068, 0, 0.7071068);
+        moveToWrapper(11, -5.5, 4.33, 0, 0.7071068, 0, 0.7071068,5);
         scaned = detectQR();
-        api.judgeSendDiscoveredQR(2, scaned );
-        if(scaned!="Reader ERROR") {
+        if(!scaned.equals("Reader ERROR")) {
             spos_z = Double.valueOf(scaned.substring(7));
+        }else{
+            moveToWrapper(11, -5.5, 4.33, 0, 0.7071068, 0, 0.7071068,1);
+            scaned = detectQR();
+            if(!scaned.equals("Reader ERROR")){
+                spos_z = Double.valueOf(scaned.substring(7));
+            }
         }
+        api.judgeSendDiscoveredQR(2, scaned );
         Log.i("Plan1","pos no 2");
 
-        moveToWrapper(10.5, -5.75, 4.94, 0, 0, 0.7071068, -0.7071068);
+        moveToWrapper(10.5, -5.75, 4.94, 0, 0, 0.7071068, -0.7071068,5);
         Log.i("Plan1","Check 9");
-        moveToWrapper(10.5, -6.8, 4.94, 0, 0, 0, 1);
+        moveToWrapper(10.5, -6.8, 4.94, 0, 0, 0, 1,5);
         Log.i("Plan1","Check 10");
-        moveToWrapper(11, -6.8, 4.94, 0, 0, 0.7071068, -0.7071068);
+        moveToWrapper(11, -6.8, 4.94, 0, 0, 0.7071068, -0.7071068,5);
 
-        moveToWrapper(11, -7.7, 5.55, 0, -0.7071068, 0, 0.7071068);
+        moveToWrapper(11, -7.7, 5.55, 0, -0.7071068, 0, 0.7071068,5);
         scaned = detectQR();
-        api.judgeSendDiscoveredQR(5, scaned );
-        if(scaned!="Reader ERROR") {
+
+        if(!scaned.equals("Reader ERROR")) {
             squa_z = Double.valueOf(scaned.substring(7));
+        }else{
+            moveToWrapper(11, -7.7, 5.55, 0, -0.7071068, 0, 0.7071068,1);
+            scaned = detectQR();
+            if(!scaned.equals("Reader ERROR")){
+                squa_z = Double.valueOf(scaned.substring(7));
+            }
         }
+        api.judgeSendDiscoveredQR(5, scaned );
         Log.i("Plan1","pos no 5");
 
-        moveToWrapper(10.30, -7.5, 4.7, 0, 0, 1, 0);
+        moveToWrapper(10.30, -7.5, 4.7, 0, 0, 1, 0,5);
         scaned = detectQR();
-        api.judgeSendDiscoveredQR(3, scaned );
-        if(scaned!="Reader ERROR") {
+
+        if(!scaned.equals("Reader ERROR")) {
             squa_x = Double.valueOf(scaned.substring(7));
+        }else{
+            moveToWrapper(10.30, -7.5, 4.7, 0, 0, 1, 0,1);
+            scaned = detectQR();
+            if(!scaned.equals("Reader ERROR")){
+                squa_x = Double.valueOf(scaned.substring(7));
+            }
         }
+        api.judgeSendDiscoveredQR(3, scaned );
         Log.i("Plan1","pos no 3");
 
-        moveToWrapper(11.5, -8, 5, 0, 0, 0, 1);
+        moveToWrapper(11.5, -8, 5, 0, 0, 0, 1,5);
         scaned = detectQR();
-        api.judgeSendDiscoveredQR(4, scaned );
-        if(scaned!="Reader ERROR") {
+
+        if(!scaned.equals("Reader ERROR")) {
             squa_y = Double.valueOf(scaned.substring(7));
+        }else{
+            moveToWrapper(11.5, -8, 5, 0, 0, 0, 1,1);
+            scaned = detectQR();
+            if(!scaned.equals("Reader ERROR")){
+                squa_y = Double.valueOf(scaned.substring(7));
+            }
         }
+        api.judgeSendDiscoveredQR(4, scaned );
         Log.i("Plan1","pos no 4");
 
 
 
         Log.i("Plan1","Check 11");
-        moveToWrapper(11.05, -7.7, 4.65, 0, 0, 0.7071068, -0.7071068);
+        moveToWrapper(11.05, -7.7, 4.65, 0, 0, 0.7071068, -0.7071068,5);
         Log.i("Plan1","Check 12");
-        moveToWrapper(11.05, spos_y, 4.65, 0, 0, 0.7071068, -0.7071068);
+        moveToWrapper(11.05, spos_y, 4.65, 0, 0, 0.7071068, -0.7071068,5);
         Log.i("Plan1","Check 13");
-        moveToWrapper(spos_x, spos_y, spos_z, 0, 0, 0.7071068, -0.7071068);
+        moveToWrapper(spos_x, spos_y, spos_z, 0, 0, 0.7071068, -0.7071068,5);
         Log.i("Plan1","Check 14");
         detectAR();
 
@@ -137,7 +178,7 @@ public class YourService extends KiboRpcService {
             spos_y=-9.55;
         }
         Log.i("Movetotarget","init");
-        moveToWrapper((spos_x+0.1414+((ARx-640)*(0.05/Pxw))), spos_y, (spos_z-0.1414-((ARy-480)*(0.05/Pxw))), 0, 0, 0.707, -0.707);
+        moveToWrapper((spos_x+0.1414+((ARx-640)*(0.05/Pxw))), spos_y, (spos_z-0.1414-((ARy-480)*(0.05/Pxw))), 0, 0, 0.707, -0.707,5);
         Log.i("Movetotarget","Moved");
         api.laserControl(true);
         Log.i("Movetotarget","lasered");
@@ -219,8 +260,21 @@ public class YourService extends KiboRpcService {
             result=reader.decode(bitmap);
             Log.i("QR_modul","Get result");
         } catch (ReaderException e){
-            Log.i("QR_modul","Reader ERROR");
+            Log.i("QR_modul","Reader ERROR 1");
             return "Reader ERROR";
+//            bMap = api.getBitmapNavCam();
+//            intArray = new int[bMap.getWidth()*bMap.getHeight()];
+//            bMap.getPixels(intArray, 0, bMap.getWidth(), 0, 0, bMap.getWidth(), bMap.getHeight());
+//            source = new RGBLuminanceSource(bMap.getWidth(), bMap.getHeight(), intArray);
+//            bitmap = new BinaryBitmap(new HybridBinarizer(source));
+//            try {
+//                result = reader.decode(bitmap);
+//                Log.i("QR_modul","Get result");
+//            }catch (ReaderException e1){
+//                Log.i("QR_modul","Reader ERROR 2");
+//                return "Reader ERROR";
+//            }
+
         }
         Log.i("QR_modul","Result : " + result.getText());
         return result.getText();
@@ -231,9 +285,9 @@ public class YourService extends KiboRpcService {
     //More info in Kibo-RPC_PGManual 5.3 dealling randomness
     private void moveToWrapper(double pos_x, double pos_y, double pos_z,
                                double qua_x, double qua_y, double qua_z,
-                               double qua_w){
+                               double qua_w,int loopmax){
 
-        final int LOOP_MAX = 5;
+        final int LOOP_MAX = loopmax;
         final Point point = new Point(pos_x, pos_y, pos_z);
         final Quaternion quaternion = new Quaternion((float)qua_x, (float)qua_y,
                                                      (float)qua_z, (float)qua_w);
